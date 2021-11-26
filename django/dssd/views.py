@@ -120,11 +120,18 @@ class RegistroSAView(View):
         data['paises'] = request.POST.getlist('countries')
         data['estados'] = request.POST.getlist('states')
         data['file_id_drive'] = file_id_drive
-        bonita.login_user('anonimo', 'bpm')
+        bonita.login_user('apoderado', 'bpm')
         sociedad_anonima = repository.add_sociedad_anonima(data)
         id_caso = bonita.send_sociedad_anonima(sociedad_anonima)
         sociedad_anonima.id_caso = id_caso
         sociedad_anonima.save()
+
+        # Cambia de estado a completado
+        [active_cases, response] = bonita.get_active_tasks_by_name(bonita.cookies(), bonita.token(), 'Llenado de formulario de Alta SA')
+        active_case = list(filter(lambda x: x['case_id'] == id_caso,active_cases))[0]
+        user_id = bonita.get_user_id('apoderado', cookies = bonita.cookies(), token = bonita.token())
+        bonita.change_task_state(bonita.cookies(), bonita.token(), active_case['task_id'], 'completed', user_id)
+
         return redirect('/')
 
 class SociedadAnonimaDetail(View):
