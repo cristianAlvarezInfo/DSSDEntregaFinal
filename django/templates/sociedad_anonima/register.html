@@ -1,0 +1,239 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+<script>
+    let idSocio = 1;
+    let porcentajeApoderado = 0;
+    
+    let values = []
+    
+    function getSelectedCountries(){
+        let options = document.getElementById('countries').selectedOptions
+        values = Array.from(options).map(({ value }) => value)
+    }
+
+    const countryStates = (country = "AR") => {
+        let options = ''
+        let selectStates = document.getElementById("states")
+       
+        getSelectedCountries()
+        
+        const url = 'https://countries.trevorblades.com/'
+        values.forEach(async (countryCode) => {
+            let response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({
+                query: `
+                    query {
+                        country(code: "${countryCode}") {
+                            states {
+                                name
+                            }
+                        }
+                    }
+                `
+            })
+        })
+        response = await response.json()
+        let states = response.data.country.states
+        states.forEach(state => options += `<option value="${state.name}:${countryCode}"> ${state.name} (${countryCode}) </option>`)
+        selectStates.innerHTML = options
+        }) 
+    }   
+    countryStates()
+    
+    function setPorcentajeApoderado(){
+        let porcentajeApoderado = document.getElementById("porcentajeApoderado").value
+    }
+    
+
+    function agregarSocio(){
+        idSocio += 1
+        const content = `
+            <div class="flex flex-col">
+                <label for="nombre_apoderado"> Nombre Socio</label> 
+                <input class="border border-8 border-black" id="nombre_apoderado" name="nombre_socio" type="text" placeholder="Ingrese el nombre del apoderado" required/>
+            </div> 
+            <div class="flex flex-col">
+                <label for="apellido_apoderado"> Apellido Socio </label> 
+                <input class="border border-8 border-black" id="apellido_apoderado" name="apellido_socio" type="text" placeholder="Ingrese el apellido del apoderado" required/>
+            </div>
+            <div class="flex flex-col">
+                <label> Porcentaje Socio</label>
+                <input class="border border-8 border-black" id="porcentajeSocio" name="porcentajeSocio" type="number" min="0" max="100" required/>
+            </div>       
+            `
+        document.getElementById("socios").innerHTML = document.getElementById("socios").innerHTML + content
+    }
+
+    document.getElementById('form').addEventListener('submit', function(e){ //say this is an anchor
+        let prevent = false
+        let totalPorcentajeSocios = 0;
+        let porcentajes = document.getElementsByName("porcentajeSocio");
+        porcentajes.forEach(e => {
+            totalPorcentajeSocios += parseFloat(e.value)
+        })
+        let porcentajeApoderado = parseFloat(document.getElementById("porcentajeApoderado").value)
+        
+        if(porcentajeApoderado < totalPorcentajeSocios){
+            document.getElementById("error-porcentaje").textContent = 'El apoderado tiene que ser el mayoritario'
+            prevent = true
+        }
+        if((parseFloat(porcentajeApoderado) + totalPorcentajeSocios) != 100){
+            document.getElementById("error-porcentaje").textContent = 'El total del porcentaje tiene que ser 100%'
+            prevent = true
+        }
+        //Chequear que el total sea 100
+        if(prevent) event.preventDefault()
+        
+    });
+
+</script>
+{% endblock scripts %}
+
+
+{% block content %}
+<div>
+    <p id="title"> Formulario de creación de Sociedad Anonima </p>
+    <div id= "formAndErros"> 
+        <label id="error-porcentaje" ></label>
+        <form id="form" method="POST" action="/registro_sa/" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                {% if error %}
+                    <span>{{error}}</span>
+                {% endif %}
+            </div>
+            <div class="labelAndInput">
+                <label for="nombre"> Nombre </label> 
+                <input id="nombre" name="nombre" type="text" placeholder="Ingrese el nombre de la SA" required/>
+            </div>
+            <div class="labelAndInput" >
+                <label for="nombre"> Porcentaje de aportes del apoderado</label> 
+                <input onchange="setPorcentajeApoderado()" id="porcentajeApoderado" name="porcentajeApoderado" type="number" min="0" max="100" required/>
+            </div>
+            <div class="labelAndInput" >
+                <label for="estatuto"> Estatuto </label> 
+                <input id="estatuo" name="estatuo" type="file" required/>
+            </div>
+            <div class="labelAndInput">
+                <label for="domicilio_legal"> Domicilio Legal </label> 
+                <input id="domicilio_legal" name="domicilio_legal" type="text" placeholder="Ingrese el domicilio legal" required/>
+            </div>
+            <div class="labelAndInput">
+                <label for="nombre"> Domicilio Real </label> 
+                <input id="domicilio_real" name="domicilio_real" type="text" placeholder="Ingrese el domicilio real" required/>
+            </div>
+            <div class="labelAndInput">
+                <h1> Apoderado </h1>
+                <div>
+                    <div class="labelAndInput">
+                        <label for="nombre_apoderado"> Nombre Apoderado</label> 
+                        <input id="nombre_apoderado" name="nombre_apoderado" type="text" placeholder="Ingrese el nombre del apoderado" required/>
+                    </div> 
+                    <div class="labelAndInput">
+                        <label for="apellido_apoderado"> Apellido Apoderado </label> 
+                        <input id="apellido_apoderado" name="apellido_apoderado" type="text" placeholder="Ingrese el apellido del apoderado" required/>
+                    </div>
+        
+                    <div class="labelAndInput" >
+                        <label for="email_apoderado"> Email Apoderado </label> 
+                        <input id="email_apoderado" name="email_apoderado" type="email" placeholder="Ingrese el email del apoderado" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="labelAndInput" >
+                <div>
+                    <label for="nombre"> Socios </label> 
+                    <button onclick="agregarSocio()" id="plusSocios"> + </button>
+                </div>
+                <div id="socios">
+                    <div class="labelAndInput">
+                        <label> Nombre Socio</label> 
+                        <input id="nombre_apoderado" name="nombre_socio" type="text" placeholder="Ingrese el nombre del apoderado" required/>
+                    </div> 
+                    <div class="labelAndInput">
+                        <label> Apellido Socio </label> 
+                        <input id="apellido_apoderado" name="apellido_socio" type="text" placeholder="Ingrese el apellido del apoderado" required/>
+                    </div>
+                    <div class="labelAndInput" >
+                        <label> Porcentaje Socio</label>
+                        <input id="porcentajeSocio" name="porcentajeSocio" type="number" min="0" max="100" required/>
+                    </div>
+                </div>
+
+                
+            </div>
+            <div id="combos">
+                <label for="nombre"> Paises que exporta </label> 
+                <select id="countries" name="countries" onchange="countryStates()" multiple>
+                    {% for c in countries %}
+                        {% if c.code == "AR" %}
+                            <option value="{{c.code}}" selected> {{c.name}} </option>
+                        {% else %}
+                            <option value="{{c.code}}"> {{c.name}} </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                
+                <label for="states" id="label-states">Estados para</label>
+                <select id="states" name="states" multiple>
+                </select>
+            </div>
+            <div id="divEnviar">
+                <input type="submit" value="Enviar">
+            </div>
+
+            
+        </form>
+    </div>
+</div>
+
+
+<style>
+    #title{
+        font-size: xx-large;
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .labelAndInput{
+        display: flex;
+        flex-direction: column;
+        margin: 1rem;
+    }
+    input, select{
+        border: solid 1px grey;
+        padding: 0.3rem;
+    }
+
+    select{
+        margin-bottom: 2rem;
+        height: 10rem;
+    }
+
+    #plusSocios:hover{
+        color: blue;
+    }
+
+    #combos{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #formAndErros{
+        display: flex;
+        justify-content: center;
+    }
+
+    #divEnviar{
+        text-align: center;
+    }
+
+</style>
+{% endblock content %}

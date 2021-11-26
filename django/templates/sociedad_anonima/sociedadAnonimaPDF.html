@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title: {{ sociedad.id }}</title>
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous"> -->
+    <style>
+        @page {
+            size: A4 portrait;
+
+        }
+        body {
+
+            margin-top: 2px;
+        }
+
+        .list-group {
+            display: block;
+            width: 100%;
+            list-style: none;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .list-group p {
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            list-style: none;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+<div style="margin: 5rem">
+    <div>
+        <br>
+        <p style="text-align: center"> <b>Sociedad Anonima {{sociedad.nombre}}</b></p>
+    </div>
+    <br>
+    <div>
+        <p style="text-align: left" ><b>Fecha de creacion</b>: {{ sociedad.fecha_creacion }}</p>
+        <p style="text-align: left"><b>Domicilio Real</b>: {{ sociedad.domicilio_real }}</p>
+        <p style="text-align: left" ><b>Domicilio Legal</b>: {{ sociedad.domicilio_legal }}</p>
+        <p style="text-align: left" ><b>Apoderado</b>: {{ sociedad.apoderado.nombre }} {{sociedad.apoderado.apellido}}</p>
+        <p style="text-align: left" ><b>Porcentaje de aporte del Apoderado</b>: {{ sociedad.apoderado.porcentaje_aporte }}</p>
+        <p style="text-align: left" ><b>Email del apoderado</b>: {{ sociedad.email_apoderado }}</p>
+
+        
+    </div>
+    <br>
+    <p>
+        <b>Socios:</b>
+    </p>
+    <br>
+    <table class = "table table-bordered">
+        <tr>
+            <th style="text-align: center"> Nombre</th>
+            <th style="text-align: center"> Apellido</th>
+            <th style="text-align: center"> Porcentaje de aportes</th>
+        </tr>
+        {% for socio in sociedad.socios.all %}
+            <tr>
+                <td style="text-align: center"> {{ socio.nombre }}</td>
+                <td style="text-align: center"> {{ socio.apellido }}</td>
+                <td style="text-align: center"> {{ socio.porcentaje_aporte }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <p>
+        <b>Estados que exporta:</b>
+    </p>
+    <br>
+    <table class = "table table-bordered">
+        <tr>
+            <th style="text-align: center"> Estado</th>
+            <th style="text-align: center"> Pais</th>
+        </tr>
+        {% for estado in sociedad.estados_exporta.all %}
+            <tr>
+                <td style="text-align: center"> {{ estado.nombre_gql }}</td>
+                <td style="text-align: center"> {{ estado.pais_gql }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
