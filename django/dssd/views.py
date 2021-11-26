@@ -3,6 +3,8 @@ import json
 from django.http import *
 from django.views import View
 
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
@@ -100,10 +102,11 @@ class RegistroSAView(View):
         
         # Save file first in local and then in drive
         file = request.FILES['estatuo']
-        BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
-        default_storage.save(f'{BASE_PATH_FILE}/media/{file.name}', file) # Save file in local
-        file_id_drive = upload_file_drive(file.name) 
-        print("id archivo: ", file_id_drive)
+        # BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
+        # default_storage.save(f'{BASE_PATH_FILE}/media/{file.name}', file) # Save file in local
+        # file_id_drive = upload_file_drive(file.name) 
+        # print("id archivo: ", file_id_drive)
+        file_id_drive = 'PEPE'
 
         nombre_socios = request.POST.getlist('nombre_socio')
         apellido_socios = request.POST.getlist('apellido_socio')
@@ -120,11 +123,18 @@ class RegistroSAView(View):
         data['paises'] = request.POST.getlist('countries')
         data['estados'] = request.POST.getlist('states')
         data['file_id_drive'] = file_id_drive
-        bonita.login_user('anonimo', 'bpm')
+        bonita.login_user('apoderado', 'bpm')
         sociedad_anonima = repository.add_sociedad_anonima(data)
         id_caso = bonita.send_sociedad_anonima(sociedad_anonima)
         sociedad_anonima.id_caso = id_caso
         sociedad_anonima.save()
+
+        # Cambia de estado a completado
+        [active_cases, response] = bonita.get_active_tasks_by_name(bonita.cookies(), bonita.token(), 'Llenado de formulario de Alta SA')
+        active_case = list(filter(lambda x: x['case_id'] == id_caso,active_cases))[0]
+        user_id = bonita.get_user_id('apoderado', cookies = bonita.cookies(), token = bonita.token())
+        bonita.change_task_state(bonita.cookies(), bonita.token(), active_case['task_id'], 'completed', user_id)
+
         return redirect('/')
 
 class SociedadAnonimaDetail(View):
@@ -140,3 +150,66 @@ class SociedadAnonimaDetail(View):
         return render(request, 'sociedad_anonima/sociedadAnonimaDetail.html', context)
 
 
+class SociedadAnonimaCorreccion(View):
+    def __complete_task_bonita(self, expired_token, id_caso):
+        id_caso = str(id_caso)
+    
+        [cookies, token, process_id, response] = bonita.login_user('apoderado','bpm')
+        bonita.update_bonita_variable(cookies, token, id_caso, 'vencioPlazo', expired_token, 'java.lang.Boolean')
+        [active_cases, response] = bonita.get_active_tasks_by_name(bonita.cookies(), bonita.token(), self._task_name)
+        print('ID CASO ',id_caso)
+        print('Active cases ',active_cases)
+        try:
+            active_case = list(filter(lambda x: x['case_id'] == id_caso,active_cases))[0]
+        except:
+            return 
+        user_id = bonita.get_user_id('apoderado', cookies = cookies, token = token)
+        bonita.change_task_state(cookies, token, active_case['task_id'], 'completed', user_id)
+
+    def get(self, request, id_sociedad, fecha_limite, id_caso):
+        fecha_limite_param = fecha_limite
+        fecha_limite = self.__format_date(fecha_limite)
+        fecha_actual = datetime.now()
+        expired_token = False
+        if fecha_limite < fecha_actual:
+            # El token se vencio
+            expired_token = True
+            self.__complete_task_bonita(True, id_caso)
+        try:
+            sociedad_anonima = repository.sociedad_anonima(id_sociedad)
+            action_url = f'/SA/correciones_mesa_entrada/{id_sociedad}/{fecha_limite_param}/{id_caso}'
+            context = {'existe_sociedad': True, 'sociedad_anonima': sociedad_anonima, 'expired': expired_token, "action_url": action_url}    
+        except:
+            context = {'existe_socidad': False, 'expired': expired_token}
+        return render(request, 'sociedad_anonima/correcciones.html', context)
+    
+    def post(self, request, id_sociedad, fecha_limite, id_caso):
+        fecha_limite = self.__format_date(fecha_limite)
+        fecha_actual = datetime.now()
+        if fecha_limite >= fecha_actual:
+            # El token no expiro
+            self.__complete_task_bonita(False, id_caso)
+
+            # Actualizamos la DB
+            sociedad_anonima = repository.sociedad_anonima(id_sociedad)
+            repository.update_sociedad(sociedad_anonima, request.POST)
+            return redirect('/')
+
+        # Por aca expiro
+        context = { 'expired': True }
+        self.__complete_task_bonita(True, id_caso)
+        return render(request, 'sociedad_anonima/correcciones.html', context)
+
+
+    def __format_date(self, fecha_limite):
+        fecha_limite=fecha_limite.replace("-","/")
+        fecha_limite = datetime.strptime(fecha_limite, "%d/%m/%Y")
+        return fecha_limite   
+
+class SociedadAnonimaCorreccionMesaEntrada(SociedadAnonimaCorreccion):
+    def __init__(self):
+        self._task_name = 'Corrección de formulario'
+
+class SociedadAnonimaCorreccionAreaLegales(SociedadAnonimaCorreccion):
+    def __init__(self):
+        self._task_name = 'Correccion formulario Legales?'

@@ -1,0 +1,101 @@
+
+
+{% block scripts %}
+<script>
+    function setPorcentajeApoderado(){
+        let porcentajeApoderado = document.getElementById("porcentajeApoderado").value
+    }
+</script>
+{% endblock scripts %}
+
+
+{% block content %}
+{% if expired %}
+<h1> Expirado </h1>
+{% else %}
+    {% if existe_sociedad %}
+    <div>
+        <p id="title"> Formulario de correccion de Sociedad Anonima </p>
+        <div id= "formAndErros"> 
+            <label id="error-porcentaje" ></label>
+            <form id="form" method="POST" action={{action_url}}>
+                {% csrf_token %}
+                <div>
+                    {% if error %}
+                        <span>{{error}}</span>
+                    {% endif %}
+                </div>
+                <div class="labelAndInput">
+                    <label for="nombre"> Nombre </label> 
+                    <input id="nombre" name="nombre" type="text" placeholder="Ingrese el nombre de la SA" value={{sociedad_anonima.nombre}} required/>
+                </div>
+                <div class="labelAndInput" >
+                    <label for="nombre"> Porcentaje de aportes del apoderado</label> 
+                    <input id="porcentajeApoderado" name="porcentajeApoderado" type="number" value={{sociedad_anonima.apoderado.porcentaje_aporte}} min="0" max="100" required/>
+                </div>
+                <div class="labelAndInput">
+                    <label for="domicilio_legal"> Domicilio Legal </label> 
+                    <input id="domicilio_legal" name="domicilio_legal" type="text" placeholder="Ingrese el domicilio legal" value={{sociedad_anonima.domicilio_legal}} required/>
+                </div>
+                <div class="labelAndInput">
+                    <label for="nombre"> Domicilio Real </label> 
+                    <input id="domicilio_real" name="domicilio_real" type="text" placeholder="Ingrese el domicilio real" value={{sociedad_anonima.domicilio_real}} required/>
+                </div>
+                <div class="labelAndInput">
+                    <h1> Apoderado </h1>
+                    <div>
+                        <div class="labelAndInput">
+                            <label for="nombre_apoderado"> Nombre Apoderado</label> 
+                            <input id="nombre_apoderado" name="nombre_apoderado" type="text" placeholder="Ingrese el nombre del apoderado" value={{sociedad_anonima.apoderado.nombre}} required/>
+                        </div> 
+                        <div class="labelAndInput">
+                            <label for="apellido"> Apellido Apoderado </label> 
+                            <input id="apellido_apoderado" name="apellido_apoderado" type="text" placeholder="Ingrese el apellido del apoderado" value={{sociedad_anonima.apoderado.apellido}} required/>
+                        </div>
+                    
+                <div id="divEnviar">
+                    <input type="submit" value="Enviar">
+                </div>
+
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <h1> La sociedad no existe </h1>
+    {% endif %}
+{% endif %}
+
+<style>
+    #title{
+        font-size: xx-large;
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .labelAndInput{
+        display: flex;
+        flex-direction: column;
+        margin: 1rem;
+    }
+    input, select{
+        border: solid 1px grey;
+        padding: 0.3rem;
+    }
+
+    select{
+        margin-bottom: 2rem;
+        height: 10rem;
+    }
+
+    #formAndErros{
+        display: flex;
+        justify-content: center;
+    }
+
+    #divEnviar{
+        text-align: center;
+    }
+
+</style>
+{% endblock content %}

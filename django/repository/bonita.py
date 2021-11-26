@@ -6,6 +6,7 @@ class Bonita(object):
         self._cookies = None
         self._token = None
         self._processID = None
+        self._id_caso = None
         self._URL = 'http://localhost:8090'
 
     def cookies(self):
@@ -16,6 +17,9 @@ class Bonita(object):
 
     def processID(self):
         return self._processID
+
+    def id_caso(self):
+        return self._id_caso
 
     def get_processID_after_login(self, cookies, token):
         headers = {'Cookie': cookies, 'X-Bonita-API-Token': token}
@@ -104,7 +108,8 @@ class Bonita(object):
         body1='{"processDefinitionId":'+ str(id_proceso) + '}'
         response = requests.request("POST",f'{self._URL}/bonita/API/bpm/case', headers=header,data=body1) 
         id_caso=response.json()["id"]     
-           
+        self._id_caso = id_caso
+
         # Seteamos el valor de la petición para el alta
         body2 = '{"type":"java.lang.String","value": ' + str(id_sociedad_anonima) + '}'
         url=f'{self._URL}/bonita/API/bpm/caseVariable/{id_caso}/id_pedido'

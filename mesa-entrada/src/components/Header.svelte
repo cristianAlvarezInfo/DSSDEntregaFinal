@@ -1,5 +1,4 @@
 <script>
-
     import { cookies,token,userID,idProcess,isLoggedUser } from '$store/store' 
 
     const logout = () => {
@@ -10,11 +9,12 @@
         isLoggedUser.set(0)
     }
 
+
 </script>
 <nav style="display: flex; flex-direction: row">
     {#if $isLoggedUser == 1 }
-        <span> Bandeja de entrada </span>
-        <span> Bandeja de entrada persona </span>
+        <a href="/bandejaGeneral"> Bandeja de entrada </a>
+        <a href="/bandejaInterna"> Bandeja de entrada persona </a>
         <a href="#" on:click={logout}> Logout </a>
     {:else}
         <a href="/login"> Login </a>
