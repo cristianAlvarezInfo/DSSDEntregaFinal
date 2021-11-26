@@ -171,6 +171,7 @@ def login_role_bonita(request):
     response = JsonResponse({})
     if request.method == 'POST':
         [cookies, token, process_id, response] = bonita.login_user('walter.bates','bpm')
+        print('Cookies ',cookies, ' ',token, ' ',process_id)
         username = request.POST.get('username')
         user_id = bonita.get_user_id(username, cookies = cookies, token = token)
         if user_id == -1:
@@ -219,4 +220,8 @@ def update_estampilla_qr(request):
     response["Access-Control-Allow-Origin"] = "*"
     return response
 
-    
+@method_decorator(csrf_exempt)
+def ping(request):
+    response = JsonResponse({'data': 'Pong!'})
+    response["Access-Control-Allow-Origin"] = "*"
+    return response

@@ -23,7 +23,7 @@ class Bonita(object):
         response = requests.request('GET', URL, headers = headers)
         if response.status_code == 200:
             data = response.json()
-            process_workflow = list(filter(lambda x: x['name'] == "Workflow",data))[0]
+            process_workflow = list(filter(lambda x: x['name'] == "Pool",data))[0]
             self._processID = process_workflow['id']
             return self._processID
         return -1
@@ -94,7 +94,7 @@ class Bonita(object):
         '''
             Save a case in bonita
         '''
-        proceso = {'s': 'Workflow'}
+        proceso = {'s': 'Pool'}
         header = {'Cookie': self._cookies,'Content-Type':'application/json'}
         response = requests.request("GET", f'{self._URL}/bonita/API/bpm/process', params= proceso, headers= header)
         id_proceso = response.json()[0]['id']
@@ -113,7 +113,7 @@ class Bonita(object):
 
     def get_active_cases(self, cookies, token, whois = None):
         headers = {'Cookie': cookies, 'X-Bonita-API-Token': token}
-        URL = f'{self._URL}/API/bpm/case?p=0&c=10&f=name=Workflow'
+        URL = f'{self._URL}/API/bpm/case?p=0&c=10&f=name=Pool'
         response = requests.request('GET', URL, headers = headers)
         if response.status_code == 200:
             data = response.json()
@@ -126,7 +126,7 @@ class Bonita(object):
             Return the active cases for a task
         '''
         headers = {'Cookie': cookies, 'X-Bonita-API-Token': token}
-        # TODO interpolar process id obteniendolo del workflow
+        # TODO interpolar process id obteniendolo del Poll
         URL = f'{self._URL}/bonita/API/bpm/task?c=10&p=0&f=processId={self.get_processID_after_login(cookies,token)}&f=name={task_name}&o=state'
         # Determinar la validez del trámite
         response = requests.request('GET', URL, headers = headers)

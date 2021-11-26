@@ -32,6 +32,7 @@ urlpatterns = [
     path('registro_sa/',RegistroSAView.as_view()),
     path('SA/<str:hash_id>', SociedadAnonimaDetail.as_view()),
     # path('api/sociedades_anonimas/', v.get_sociedades_anonimas.as_view(), name='mesaDeEntrada'),
+    path('api/ping/', api.ping , name='login_bonita'),
     path('api/login_bonita/', api.login_bonita , name='login_bonita'),
     path('api/login_role_bonita/', api.login_role_bonita , name='login_role_bonita'),
     path('api/bonita_user_id/', api.get_user_id , name='get_user_id'),
