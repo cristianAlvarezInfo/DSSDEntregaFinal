@@ -39,8 +39,8 @@
         {#each segments as sociedad, i}
                 <div style="display: flex; flex-direction: row; margin-top: 10px">
                     <li> { sociedad.data.nombre } </li>
-                    <li> { sociedad.data.emailApoderado } </li>
-                    <li><button on:click={() => openedDetails[i] = !openedDetails[i] || false}> Ver detalle </button></li>
+                    <li style="margin-left: 10px"> { sociedad.data.emailApoderado } </li>
+                    <li style="margin-left: 10px"><button on:click={() => openedDetails[i] = !openedDetails[i] || false}> Ver detalle </button></li>
                 </div>
                 <div>
                     {#if openedDetails[i]}

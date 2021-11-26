@@ -51,12 +51,12 @@
         Trayendo sociedad anonimas. Espere :)
     {:then}
         {#if segments && segments.length}
-        <ul style="display: flex; flex-direction: row;  list-style:none;">
+        <ul style="display: flex; flex-direction: column;  list-style:none;">
         {#each segments as sociedad}
                 <br>
                 <li> { sociedad.data.nombre } </li>
-                <li> { sociedad.data.emailApoderado } </li>
-                <li><button on:click={ apropiarse(sociedad.task_id) }>Apropiarse</button></li>
+                <li style="margin-left: 10px"> { sociedad.data.emailApoderado } </li>
+                <li style="margin-left: 10px"><button on:click={ apropiarse(sociedad.task_id) }>Apropiarse</button></li>
         {/each}
         </ul>
         {:else}

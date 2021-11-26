@@ -13,10 +13,10 @@
 </script>
 <nav style="display: flex; flex-direction: row">
     {#if $isLoggedUser == 1 }
-        <a href="/bandejaGeneral"> Bandeja de entrada </a>
-        <a href="/bandejaInterna"> Bandeja de entrada persona </a>
-        <a href="#" on:click={logout}> Logout </a>
+        <div><a href="/bandejaGeneral"> Bandeja de entrada </a></div>
+        <div style="margin-left: 10px"><a href="/bandejaInterna"> Bandeja de entrada persona </a></div>
+        <div style="margin-left: 10px"><a href="#" on:click={logout}> Logout </a></div>
     {:else}
         <a href="/login"> Login </a>
     {/if}
-</nav>
+</nav>  
