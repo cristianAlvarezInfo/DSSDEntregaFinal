@@ -12,5 +12,9 @@
     "@sveltejs/kit": "next",
     "svelte": "^3.44.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "handlebars": "^4.7.7",
+    "html-pdf": "^3.0.1"
+  }
 }

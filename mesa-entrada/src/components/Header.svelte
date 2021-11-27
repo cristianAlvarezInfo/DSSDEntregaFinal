@@ -15,6 +15,7 @@
     {#if $isLoggedUser == 1 }
         <div><a href="/bandejaGeneral"> Bandeja de entrada </a></div>
         <div style="margin-left: 10px"><a href="/bandejaInterna"> Bandeja de entrada persona </a></div>
+        <div style="margin-left: 10px"><a href="/ListadoCarpetaFisica"> Bandeja carpetas </a></div>
         <div style="margin-left: 10px"><a href="#" on:click={logout}> Logout </a></div>
     {:else}
         <a href="/login"> Login </a>
