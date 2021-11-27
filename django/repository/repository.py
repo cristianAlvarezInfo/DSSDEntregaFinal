@@ -82,13 +82,14 @@ class Repository(object):
     def sociedad_anonima(self, id_sociedad):
         return SociedadAnonima.objects.get(id=id_sociedad)
 
-    def update_sociedad(self, socidead_anonima, datos_sociedad):
-        socidead_anonima.nombre = datos_sociedad.get('nombre')
-        socidead_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('porcentajeApoderado')
-        socidead_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('nombre_apoderado')
-        socidead_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('apellido_apoderado')
-        socidead_anonima.domicilio_real = datos_sociedad.get('domicilio_real')
-        socidead_anonima.domicilio_legal = datos_sociedad.get('domicilio_legal')
+    def update_sociedad(self, sociedad_anonima, datos_sociedad):
+        sociedad_anonima.nombre = datos_sociedad.get('nombre')
+        sociedad_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('porcentajeApoderado')
+        sociedad_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('nombre_apoderado')
+        sociedad_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('apellido_apoderado')
+        sociedad_anonima.domicilio_real = datos_sociedad.get('domicilio_real')
+        sociedad_anonima.domicilio_legal = datos_sociedad.get('domicilio_legal')
+        sociedad_anonima.save()
 
     def find_sociedad_by_num_expediente(self, num_expediente):
         print('num expediente',num_expediente)
