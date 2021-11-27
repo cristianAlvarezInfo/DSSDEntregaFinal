@@ -10,20 +10,11 @@
 {% if found %}
 <div>
     <p id="nombre"> Sociedad Anonima: {{ sociedad_anonima.nombre }}  </p>
-    <p id="fecha"> Sociedad Anonima: {{ sociedad_anonima.fecha_creacion }}  </p>
-    <div id="socios"> 
-        <p>Socios</p>
-        <ul>
-            {% for socio in socios %}
-                <li>
-                    <span>{{socio.nombre}}</span>
-                    <span>{{socio.apellido}}</span>
-                    <span>{{socio.porcentaje_aporte}}</span>
-                    <!-- FALTA AGREGAR LA FOTO DEL QR -->
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <p id="fecha"> Fecha: {{ sociedad_anonima.fecha_creacion }}  </p>
+    <p id="fecha"> Domicilio legal: {{ sociedad_anonima.domicilio_legal }}  </p>
+    <p id="fecha"> Domicilio real: {{ sociedad_anonima.domicilio_real }}  </p>
+
+ 
 </div>
 {% else %}
 <div style="display: flex; justify-content: center;">

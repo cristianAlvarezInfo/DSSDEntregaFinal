@@ -97,6 +97,11 @@ class Repository(object):
         print(sociedad)
         return sociedad[0] if len(sociedad) > 0 else None    
 
+    def find_sociedad_by_short_hash_estampilla(self, short_hash_estampilla):
+        print(list(SociedadAnonima.objects.all())[-1].__dict__)
+        sociedad = SociedadAnonima.objects.filter(short_hash_estampilla = short_hash_estampilla)
+        return sociedad[0] if len(sociedad) > 0 else None   
+
     def socios(self, id_sociedad):
         return SocioSociedadAnonima.objects.filter(sociedad = id_sociedad)
 

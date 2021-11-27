@@ -140,13 +140,11 @@ class RegistroSAView(View):
 class SociedadAnonimaDetail(View):
     def get(self, request, hash_id):
         # TODO desencriptar el id que llega, ahora viene plano
-        try:
-            sociedad_anonima = repository.sociedad_anonima(id)
-            socios = repository.socios(id)
-            self._generate_qr(sociedad_anonima)
-            context = { 'found': True, 'sociedad_anonima': sociedad_anonima, 'socios': socios }
-        except:
-            context = { 'found': False, 'sociedad_anonima': None } 
+        sociedad_anonima = repository.find_sociedad_by_short_hash_estampilla(hash_id)
+        if not sociedad_anonima:
+            context = { 'found': False, 'sociedad_anonima': sociedad_anonima }
+        else:
+            context = { 'found': True, 'sociedad_anonima': sociedad_anonima }
         return render(request, 'sociedad_anonima/sociedadAnonimaDetail.html', context)
 
 

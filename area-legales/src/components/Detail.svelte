@@ -5,7 +5,6 @@
     const caseID = sociedad.case_id;
     const taskID = sociedad.task_id;
     sociedad = sociedad.data;
-    
     let textoCorrecciones;
     let inputFechaLimiteCorreccion;
     let sociedadRechazada = false;
@@ -55,6 +54,8 @@
       URL = "http://localhost:8000/api/update_variable/";
       await Promise.all([
         fetch(URL, { method:"POST", body: setBody("tramiteValido",true,"java.lang.Boolean",caseID) }),
+        fetch(URL, { method:"POST", body: setBody("numeroExpediente",true,"java.lang.String",sociedad.numero_expediente) }),
+        fetch(URL, { method:"POST", body: setBody("estatuto",true,"java.lang.String","/prueba/prueba") }),
       ])
       await updateTaskState(taskID);
       window.location.replace('/bandejaGeneral')
@@ -76,7 +77,7 @@
 </script>
 
 <div>
-   {caseID} {taskID}
+   {caseID} {taskID}  {JSON.stringify(sociedad)}
     <p> Nombre: {sociedad.nombre} </p>
     <p> Fecha de Emision de Solicitud: {sociedad.fechaCreacion} </p>
     <p> Domicilio Real: {sociedad.domicilioReal} </p>
