@@ -44,4 +44,5 @@ urlpatterns = [
     path('api/get_sociedades_anonimas_by_task_name/', api.get_sociedades_anonimas_by_task_name , name='get_sociedades_anonimas_by_task_name'),
     path('api/assign_task_to_user/', api.assign_task_to_user , name='assign_task_to_user'),
     path('api/assign_numero_expediente/', api.assign_num_exp , name='assign_num_exp'),
+    path('api/save_carpeta_fisica/', api.export_to_pdf , name='export_to_pdf')
 ]

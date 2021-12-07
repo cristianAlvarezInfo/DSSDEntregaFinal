@@ -29,6 +29,7 @@ class SociedadAnonima(models.Model):
     short_hash_estampilla = models.TextField(null = True)
     id_caso = models.IntegerField(null = True)                      #id caso bonita
     file_id_drive = models.TextField()                              #url del estatuto
+    carpeta_fisica = models.TextField()
 
     def get_paises_json(self):
         prev = self.paises_exporta.all()
