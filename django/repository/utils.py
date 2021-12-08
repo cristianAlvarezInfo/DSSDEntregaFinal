@@ -4,6 +4,8 @@ import os.path
 
 import requests
 
+from fpdf import FPDF 
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
@@ -18,6 +20,17 @@ BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
 FILE_PATH_SECRETS = f'{BASE_PATH_FILE}/repository/client_secret.json'
 FILE_PATH_CREDENTIALES = f'{BASE_PATH_FILE}/repository/credentials.json'
 FILE_PATH_TOKEN = f'{BASE_PATH_FILE}/repository/token.json'
+
+def create_pdf_with_content(content,filename):
+    pdf = FPDF() 
+    pdf.add_page() 
+    pdf.set_font("Arial", size = 12) 
+    # create a cell 
+    rows=content.split("\n")
+    for i in rows:
+        row=i.lstrip()
+        pdf.cell(200, 10, txt = row, ln = 1, align = 'L') 
+    pdf.output(f'{BASE_PATH_FILE}/media/{filename}') 
 
 def drive_service():
     '''

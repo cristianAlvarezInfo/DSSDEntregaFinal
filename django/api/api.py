@@ -5,8 +5,7 @@ from repository.repository import Repository
 from repository.bonita import Bonita
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from fpdf import FPDF 
-
+from repository.utils import create_pdf_with_content
 
 repository = Repository()
 bonita = Bonita()
@@ -238,22 +237,14 @@ def export_to_pdf(request):
         filename = body['filename']
         content = body['content']
         id_sociedad = body['idSociedad']
+        create_pdf_with_content(content,filename)
+
         BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
-        
-        # sociedad = repository.sociedad_anonima(id_sociedad)
-        # sociedad.carpeta_fisica = f'{BASE_PATH_FILE}/media/{filename}'
-        # sociedad.save()
+        sociedad = repository.sociedad_anonima(id_sociedad)
+        sociedad.carpeta_fisica = f'{BASE_PATH_FILE}/media/{filename}'
+        sociedad.save()
 
-        pdf = FPDF() 
-        pdf.add_page() 
-        pdf.set_font("Arial", size = 12) 
-        # create a cell 
-        pdf.cell(200, 10, txt = content, 
-                ln = 1, align = 'C') 
-        pdf.output(f'{BASE_PATH_FILE}/media/{filename}') 
-
-
-
+ 
     response = JsonResponse({'state': response.status_code, 'ok': response.status_code == 200})
     response["Access-Control-Allow-Origin"] = "*"
     return response

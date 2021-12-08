@@ -5,6 +5,34 @@
     function setPorcentajeApoderado(){
         let porcentajeApoderado = document.getElementById("porcentajeApoderado").value
     }
+    console.log(document.getElementById('form'))
+
+    document.addEventListener("DOMContentLoaded", function(e) {
+        document.getElementById('form').addEventListener('submit', function(e){ //say this is an anchor
+        console.log('Entreeeeeee')
+        let prevent = false
+        let totalPorcentajeSocios = 0;
+        let porcentajes = document.getElementsByName("porcentajeSocio");
+        porcentajes.forEach(e => {
+            totalPorcentajeSocios += parseFloat(e.value)
+        })
+        let porcentajeApoderado = parseFloat(document.getElementById("porcentajeApoderado").value)
+        
+        if(porcentajeApoderado < totalPorcentajeSocios){
+            document.getElementById("error-porcentaje").textContent = 'El apoderado tiene que ser el mayoritario'
+            prevent = true
+        }
+        if((parseFloat(porcentajeApoderado) + totalPorcentajeSocios) != 100){
+            document.getElementById("error-porcentaje").textContent = 'El total del porcentaje tiene que ser 100%'
+            prevent = true
+        }
+        //Chequear que el total sea 100
+        if(prevent) event.preventDefault()
+        
+    });
+    });
+
+    
 </script>
 {% endblock scripts %}
 
@@ -18,7 +46,7 @@
         <p id="title"> Formulario de correccion de Sociedad Anonima </p>
         <div id= "formAndErros"> 
             <label id="error-porcentaje" ></label>
-            <form id="form" method="POST" action={{action_url}}>
+            <form id="form" method="POST" action={{action_url}} enctype="multipart/form-data">
                 {% csrf_token %}
                 <div>
                     {% if error %}
@@ -52,10 +80,33 @@
                             <label for="apellido"> Apellido Apoderado </label> 
                             <input id="apellido_apoderado" name="apellido_apoderado" type="text" placeholder="Ingrese el apellido del apoderado" value={{sociedad_anonima.apoderado.apellido}} required/>
                         </div>
+                    </div>
+                </div> 
+                <div class="labelAndInput" >
+                    <h1> Socios </h1>
+                    {% for socio in sociedad_anonima.socios.all %}
+                    <div id="socios">
+                        <div class="labelAndInput">
+                            <label> Nombre Socio</label> 
+                            <input id="nombre_apoderado" name="nombre_socio" type="text" placeholder="Ingrese el nombre del apoderado" value={{socio.nombre}} required/>
+                        </div> 
+                        <div class="labelAndInput">
+                            <label> Apellido Socio </label> 
+                            <input id="apellido_apoderado" name="apellido_socio" type="text" placeholder="Ingrese el apellido del apoderado" value={{socio.apellido}} required/>
+                        </div>
+                        <div class="labelAndInput" >
+                            <label> Porcentaje Socio</label>
+                            <input id="porcentajeSocio" name="porcentajeSocio" type="number" min="0" max="100" value={{socio.porcentaje_aporte}}  required/>
+                        </div>
+                    </div>
+                    {% endfor %}
                     
+                </div>    
+
                 <div id="divEnviar">
                     <input type="submit" value="Enviar">
                 </div>
+
 
             </form>
         </div>
