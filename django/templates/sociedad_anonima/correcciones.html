@@ -1,5 +1,3 @@
-
-
 {% block scripts %}
 <script>
     function setPorcentajeApoderado(){
@@ -32,6 +30,46 @@
     });
     });
 
+    let values = []
+    
+    function getSelectedCountries(){
+        let options = document.getElementById('countries').selectedOptions
+        values = Array.from(options).map(({ value }) => value)
+    }
+
+    const countryStates = (country = "AR") => {
+        let options = ''
+        let selectStates = document.getElementById("states")
+       
+        getSelectedCountries()
+        
+        const url = 'https://countries.trevorblades.com/'
+        values.forEach(async (countryCode) => {
+            let response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({
+                query: `
+                    query {
+                        country(code: "${countryCode}") {
+                            states {
+                                name
+                            }
+                        }
+                    }
+                `
+            })
+        })
+        response = await response.json()
+        let states = response.data.country.states
+        states.forEach(state => options += `<option value="${state.name}:${countryCode}"> ${state.name} (${countryCode}) </option>`)
+        selectStates.innerHTML = options
+        }) 
+    }   
+    countryStates()
     
 </script>
 {% endblock scripts %}
@@ -101,8 +139,32 @@
                     </div>
                     {% endfor %}
                     
-                </div>    
-
+                </div> 
+                <div id="combos">
+                    <label for="nombre"> Paises que exporta </label> 
+                    <select id="countries" name="countries" onchange="countryStates()" multiple>
+                        {% for c in countries %}
+                            {% if c.code in selected_countries_code %}
+                            <option value="{{c.code}}" selected>{{c.name}}</option>
+                            {% else %}
+                            <option value="{{c.code}}">{{c.name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="states" id="label-states">Estados para</label>
+                    <select id="states" name="states" multiple>
+                        {% for country, country_states in states.items %}
+                            {{country}}
+                            {% for state in country_states %}
+                                {% if state.name in selected_states_name %}
+                                <option value="{{state.name}}:{{country}}" selected> {{state.name}} {{country}} </option>
+                                {% else %}
+                                <option value="{{state.name}}:{{country}}"> {{state.name}} {{country}} </option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
                 <div id="divEnviar">
                     <input type="submit" value="Enviar">
                 </div>
@@ -116,12 +178,18 @@
     {% endif %}
 {% endif %}
 
+
 <style>
     #title{
         font-size: xx-large;
         text-align: center;
         margin-top: 2rem;
         margin-bottom: 1rem;
+    }
+
+    #combos{
+        display: flex;
+        flex-direction: column;
     }
 
     .labelAndInput{

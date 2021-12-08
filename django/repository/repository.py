@@ -48,7 +48,7 @@ class Repository(object):
         
         sociedad_anonima = SociedadAnonima(nombre = data['nombre'],fecha_creacion = date.today() ,estatuto = data['estatuto'],
                         domicilio_real=data['domicilio_real'],domicilio_legal=data['domicilio_legal'],email_apoderado=data['email_apoderado'],
-                        apoderado = apoderado, file_id_drive = data['file_id_drive'])
+                        apoderado = apoderado)
         sociedad_anonima.save()
         sociedad_anonima.encrypted_id = '0' # TODO encriptar el sociedad_anonima.id y guardarlo
         sociedad_anonima.save()
@@ -82,9 +82,32 @@ class Repository(object):
     def sociedad_anonima(self, id_sociedad):
         return SociedadAnonima.objects.get(id=id_sociedad)
 
+    def update_country_states(self,sociedad,countries, states):
+        if len(countries) == 0:
+            # No actualizamos la BD porque no cambiaron los datos
+            return
+
+        # Eliminamos las filas de paises y estados ya que cambiaron
+        sociedad.paises_exporta.clear()
+        sociedad.estados_exporta.clear()
+
+        # Reactualizamos paises
+        for codigo_pais in countries:
+            pais = self.create_pais(codigo_pais)
+            sociedad.paises_exporta.add(pais)
+        
+        # Reactualizamos estados
+        for estado in states:
+            nombre_estado_gql = estado.split(':')[0]
+            code_pais_gql = estado.split(':')[1]
+            estado = self.create_estado(nombre_estado_gql,code_pais_gql)
+            sociedad.estados_exporta.add(estado)
+
     def update_sociedad(self, sociedad_anonima, datos_sociedad):
-        print('Datos sociedad', datos_sociedad)
-        print('Apoderado ',sociedad_anonima.apoderado)        
+        countries = datos_sociedad.getlist('countries')
+        states = datos_sociedad.getlist('states')
+        self.update_country_states(sociedad_anonima, countries, states)
+
         sociedad_anonima.nombre = datos_sociedad.get('nombre')
         sociedad_anonima.apoderado.porcentaje_aporte = datos_sociedad.get('porcentajeApoderado')
         sociedad_anonima.apoderado.nombre = datos_sociedad.get('nombre_apoderado')

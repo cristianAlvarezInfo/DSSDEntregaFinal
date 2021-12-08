@@ -77,14 +77,31 @@ def get_countries():
     query = {
         "query": '{ countries { code, name, states { name } } }'
     }
-    
+    print(query)
     headers = {'content-type': 'application/json'}
     response = requests.post('https://countries.trevorblades.com/', json=query, headers=headers)
     return response.json()['data']['countries']
 
+
+def get_states(selected_countries):
+    def get_country_query(country_code):
+        return '{ country(code: "' + country_code + '") { states { name } } }'
+    
+    states = {}
+    states_name = []
+    for country_code in selected_countries:
+        query = {
+            "query": get_country_query(country_code)
+        }
+        print(query)
+        headers = {'content-type': 'application/json'}
+        response = requests.post('https://countries.trevorblades.com/', json=query, headers=headers)
+        states_json = response.json()['data']['country']['states']
+        states[country_code] = states_json
+    return states
+
 class RegistroSAView(View):
     def get(self,request):
-        list_files_uploaded()
         return render(request,'sociedad_anonima/register.html', context={'countries': get_countries()})
 
     def post(self,request):
@@ -102,12 +119,9 @@ class RegistroSAView(View):
         
         # Save file first in local and then in drive
         file = request.FILES['estatuo']
-        # BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
-        # default_storage.save(f'{BASE_PATH_FILE}/media/{file.name}', file) # Save file in local
-        # file_id_drive = upload_file_drive(file.name) 
-        # print("id archivo: ", file_id_drive)
-        file_id_drive = 'PEPE'
-
+        BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
+        default_storage.save(f'{BASE_PATH_FILE}/media/{file.name}', file) # Save file in local
+       
         nombre_socios = request.POST.getlist('nombre_socio')
         apellido_socios = request.POST.getlist('apellido_socio')
         porcentaje_socios = request.POST.getlist('porcentajeSocio')
@@ -122,12 +136,11 @@ class RegistroSAView(View):
         data['socios'] = socios
         data['paises'] = request.POST.getlist('countries')
         data['estados'] = request.POST.getlist('states')
-        data['file_id_drive'] = file_id_drive
         # bonita.login_user('apoderado', 'bpm')
         sociedad_anonima = repository.add_sociedad_anonima(data)
         # id_caso = bonita.send_sociedad_anonima(sociedad_anonima)
         # sociedad_anonima.id_caso = id_caso
-        sociedad_anonima.id_caso = -1
+        sociedad_anonima.id_caso = 1
         sociedad_anonima.save()
 
         # Cambia de estado a completado
@@ -175,10 +188,22 @@ class SociedadAnonimaCorreccionMesaEntrada(View):
             self.__complete_task_bonita(True, id_caso)
         try:
             sociedad_anonima = repository.sociedad_anonima(id_sociedad)
+            selected_countries_codes = list(map(lambda x: x.codigo_gql, sociedad_anonima.paises_exporta.all()))
+            selected_states_names = list(map(lambda x: x.nombre_gql, sociedad_anonima.estados_exporta.all()))
+            states = get_states(selected_countries_codes)
             action_url = f'/SA/correciones_mesa_entrada/{id_sociedad}/{fecha_limite_param}/{id_caso}'
-            context = {'existe_sociedad': True, 'sociedad_anonima': sociedad_anonima, 'expired': expired_token, "action_url": action_url}    
+            context = {
+                'existe_sociedad': True, 
+                'sociedad_anonima': sociedad_anonima, 
+                'expired': expired_token, 
+                "action_url": action_url, 
+                'countries': get_countries(), 
+                'states': states,
+                'selected_countries_code': selected_countries_codes,
+                'selected_states_name': selected_states_names,
+            }    
         except:
-            context = {'existe_socidad': False, 'expired': expired_token}
+            context = {'existe_socidad': False, 'expired': expired_token, 'countries': []}
         return render(request, 'sociedad_anonima/correcciones.html', context)
     
     def post(self, request, id_sociedad, fecha_limite, id_caso):
@@ -187,8 +212,6 @@ class SociedadAnonimaCorreccionMesaEntrada(View):
         if fecha_limite >= fecha_actual:
             # El token no expiro
             #self.__complete_task_bonita(False, id_caso) #DESCOMENTAR
-
-            print('ACTUALIZAMOS BD!!!!')
             # Actualizamos la DB
             sociedad_anonima = repository.sociedad_anonima(id_sociedad)
             repository.update_sociedad(sociedad_anonima, request.POST)

@@ -28,7 +28,6 @@ class SociedadAnonima(models.Model):
     hash_estampilla = models.TextField(null = True)
     short_hash_estampilla = models.TextField(null = True)
     id_caso = models.IntegerField(null = True)                      #id caso bonita
-    file_id_drive = models.TextField()                              #url del estatuto
     carpeta_fisica = models.TextField(null = True)
 
     def get_paises_json(self):
@@ -117,6 +116,9 @@ class Pais(models.Model):
     class Meta:
         db_table = 'Pais'
     codigo_gql = models.CharField(max_length = 255, null = False)
+
+    def __str__(self):
+        return self.codigo_gql
 
 class Estado(models.Model):
     class Meta:
