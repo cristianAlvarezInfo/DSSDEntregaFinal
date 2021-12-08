@@ -136,6 +136,7 @@ class RegistroSAView(View):
         data['socios'] = socios
         data['paises'] = request.POST.getlist('countries')
         data['estados'] = request.POST.getlist('states')
+        data['estatuto'] = file.name
         # bonita.login_user('apoderado', 'bpm')
         sociedad_anonima = repository.add_sociedad_anonima(data)
         # id_caso = bonita.send_sociedad_anonima(sociedad_anonima)
@@ -214,7 +215,11 @@ class SociedadAnonimaCorreccionMesaEntrada(View):
             #self.__complete_task_bonita(False, id_caso) #DESCOMENTAR
             # Actualizamos la DB
             sociedad_anonima = repository.sociedad_anonima(id_sociedad)
-            repository.update_sociedad(sociedad_anonima, request.POST)
+            try:
+                file = request.FILES['estatuo']
+            except:
+                file = None
+            repository.update_sociedad(sociedad_anonima, request.POST, file = file)
             return redirect('/')
 
         # Por aca expiro
@@ -265,6 +270,10 @@ class SociedadAnonimaCorreccionAreaLegales(View):
     
     def post(self, request, id_sociedad, id_caso):
         sociedad_anonima = repository.sociedad_anonima(id_sociedad)
-        repository.update_sociedad(sociedad_anonima, request.POST)
+        try:
+            file = request.FILES['estatuo']
+        except:
+            file = None
+        repository.update_sociedad(sociedad_anonima, request.POST, file = file)
         # self.__complete_task_bonita(id_caso) DESCOMENTAR
         return redirect('/')

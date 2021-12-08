@@ -1,6 +1,12 @@
+import os
+
 from datetime import date
 from models.models import *
+
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
+
+
 
 class Repository(object):
     def find_user_by_email(self, email):
@@ -104,7 +110,14 @@ class Repository(object):
             estado = self.create_estado(nombre_estado_gql,code_pais_gql)
             sociedad.estados_exporta.add(estado)
 
-    def update_sociedad(self, sociedad_anonima, datos_sociedad):
+    def update_sociedad(self, sociedad_anonima, datos_sociedad, file, ):
+        if file is not None:
+            sociedad_anonima.estatuto = file.name 
+            # Eliminar el viejo y poner el nuevo
+            BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
+            default_storage.save(f'{BASE_PATH_FILE}/media/{file.name}', file) # Save new file in local
+
+
         countries = datos_sociedad.getlist('countries')
         states = datos_sociedad.getlist('states')
         self.update_country_states(sociedad_anonima, countries, states)
