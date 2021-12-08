@@ -203,7 +203,7 @@ class SociedadAnonimaCorreccionMesaEntrada(View):
                 'selected_states_name': selected_states_names,
             }    
         except:
-            context = {'existe_socidad': False, 'expired': expired_token, 'countries': []}
+            context = {'existe_socidad': False, 'expired': expired_token, 'countries': [], 'states': []}
         return render(request, 'sociedad_anonima/correcciones.html', context)
     
     def post(self, request, id_sociedad, fecha_limite, id_caso):
@@ -245,13 +245,26 @@ class SociedadAnonimaCorreccionAreaLegales(View):
         try:
             sociedad_anonima = repository.sociedad_anonima(id_sociedad)
             action_url = f'/SA/correciones_area_legales/{id_sociedad}/{id_caso}'
-            context = {'existe_sociedad': True, 'sociedad_anonima': sociedad_anonima, 'expired': False, "action_url": action_url}    
+            selected_countries_codes = list(map(lambda x: x.codigo_gql, sociedad_anonima.paises_exporta.all()))
+            selected_states_names = list(map(lambda x: x.nombre_gql, sociedad_anonima.estados_exporta.all()))
+            states = get_states(selected_countries_codes)
+
+            context = {
+                'existe_sociedad': True, 
+                'sociedad_anonima': sociedad_anonima, 
+                'expired': False, 
+                "action_url": action_url,
+                'countries': get_countries(), 
+                'states': states,
+                'selected_countries_code': selected_countries_codes,
+                'selected_states_name': selected_states_names,
+                }    
         except:
-            context = {'existe_socidad': False, 'expired': False}
+            context = {'existe_socidad': False, 'expired': False, 'countries': [], 'states': []}
         return render(request, 'sociedad_anonima/correcciones.html', context)
     
     def post(self, request, id_sociedad, id_caso):
         sociedad_anonima = repository.sociedad_anonima(id_sociedad)
         repository.update_sociedad(sociedad_anonima, request.POST)
-        self.__complete_task_bonita(id_caso)
+        # self.__complete_task_bonita(id_caso) DESCOMENTAR
         return redirect('/')

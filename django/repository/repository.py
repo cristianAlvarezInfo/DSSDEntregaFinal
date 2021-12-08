@@ -83,13 +83,14 @@ class Repository(object):
         return SociedadAnonima.objects.get(id=id_sociedad)
 
     def update_country_states(self,sociedad,countries, states):
-        if len(countries) == 0:
-            # No actualizamos la BD porque no cambiaron los datos
-            return
-
         # Eliminamos las filas de paises y estados ya que cambiaron
         sociedad.paises_exporta.clear()
         sociedad.estados_exporta.clear()
+
+        if len(countries) == 0:
+            # Si no vienen paises, por defecto definimos a argentina
+            pais = self.create_pais("AR")
+            sociedad.paises_exporta.add(pais)
 
         # Reactualizamos paises
         for codigo_pais in countries:
