@@ -64,13 +64,14 @@
         }
         const compiledTemplate = Handlebars.compile(template)(context);
         const fileName = `./${sociedad.nombre}${sociedad.fechaCreacion}.pdf`
-        const options = { format: 'Letter' };
-        console.log(compiledTemplate)
-        pdf.create(compiledTemplate, options).toFile(fileName, function(err, res) {
-            if (err) return console.log(err);
-            console.log(res); // { filename: '/app/businesscard.pdf' }
-        });
-        // await updateTaskState(sociedad.task_id)
+        const opts = {
+           method: "POST",
+           body: JSON.stringify({ filename: filename, content: compiledTemplate, idSociedad: sociedad.id })
+        }
+        await Promise.all([
+            fetch('http://localhost:8000/api/save_carpeta_fisica/', opts);
+            // updateTaskState(sociedad.task_id);
+        ])
     }
 </script>
 
