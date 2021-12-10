@@ -118,7 +118,7 @@ def update_case_variable(request):
         case_id = request.POST.get('case_id')
         cookies = request.POST.get('cookies')
         token = request.POST.get('token')
-        # [cookies, token, process_id, response] = bonita.login_user('walter.bates', 'bpm')
+        #[cookies, token, process_id, response] = bonita.login_user('walter.bates', 'bpm')
         response = bonita.update_bonita_variable(cookies, token, case_id, variable_name, value_variable, type_variable)
     response = JsonResponse({'state': response.status_code, 'ok': response.status_code == 200})
     response["Access-Control-Allow-Origin"] = "*"
@@ -233,12 +233,12 @@ def export_to_pdf(request):
     response = JsonResponse({})
     if request.method == 'POST':
         body = json.loads(request.body)
-        print(body)
         filename = body['filename']
         content = body['content']
         id_sociedad = body['idSociedad']
         create_pdf_with_content(content,filename)
 
+        # Guardamos la carpeta en la BD
         BASE_PATH_FILE = str(os.path.abspath(os.getcwd()))
         sociedad = repository.sociedad_anonima(id_sociedad)
         sociedad.carpeta_fisica = f'{BASE_PATH_FILE}/media/{filename}'

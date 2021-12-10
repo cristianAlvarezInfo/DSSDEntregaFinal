@@ -12,6 +12,7 @@
 
 </script>
 <nav style="display: flex; flex-direction: row">
+    <div style="margin-right: 10px"><span>Area legales</span></div>
     {#if $isLoggedUser == 1 }
         <div><a href="/bandejaGeneral"> Bandeja de entrada </a></div>
         <div style="margin-left: 10px"><a href="/bandejaInterna"> Bandeja de entrada persona </a></div>

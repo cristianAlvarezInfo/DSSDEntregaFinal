@@ -73,7 +73,7 @@ class SociedadAnonima(models.Model):
             "numero_expediente":self.numero_expediente,
             "encrypted_id": self.encrypted_id,
             "id_caso": self.id_caso,
-            "file_id_drive": self.file_id_drive
+
             }
         return diccionario
     

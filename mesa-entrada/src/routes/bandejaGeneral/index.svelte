@@ -60,7 +60,7 @@
         {/each}
         </ul>
         {:else}
-        <div v-else>
+        <div>
             No hay tareas pendientes
         </div> 
         {/if}
