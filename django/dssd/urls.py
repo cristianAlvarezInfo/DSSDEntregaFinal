@@ -46,5 +46,7 @@ urlpatterns = [
     path('api/assign_numero_expediente/', api.assign_num_exp , name='assign_num_exp'),
     path('api/save_carpeta_fisica/', api.export_to_pdf , name='export_to_pdf'),
     path('api/cases_by_task/', api.get_count_active_task_by_name , name='get_count_active_task_by_name'),
-    path('api/cases_by_date/', api.get_count_active_task_by_date , name='get_count_active_task_by_date')
+    path('api/cases_by_date/', api.get_count_active_task_by_date , name='get_count_active_task_by_date'),
+    path('api/get_archived_cases/', api.get_archived_cases , name='get_archived_cases'),
+    path('pdf_viewer/<int:id_sociedad>/', render_pdf,name='render_pdf')
 ]

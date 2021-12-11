@@ -22,7 +22,6 @@
 
 </script>
 
-{JSON.stringify(data)}
 {#if Object.keys(data) && Object.keys(data).length }
     <Chart data={data} type="bar" />
 {/if}

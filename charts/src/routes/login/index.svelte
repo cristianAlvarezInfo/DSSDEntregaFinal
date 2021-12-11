@@ -61,7 +61,6 @@
 
 
 <div>
-    {JSON.stringify(userInfo)}
     <div style="display: flex; justify-content: center">
         <div style="width: 30%">
             {#if !isValidInfo}

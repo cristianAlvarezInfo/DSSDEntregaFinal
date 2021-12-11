@@ -21,6 +21,10 @@ from repository.bonita import Bonita
 from repository.repository import Repository
 from repository.utils import upload_file_drive, list_files_uploaded
 
+
+from django.http import FileResponse
+import os
+
 # from rest_framework.views import APIView
 # from rest_framework import permissions
 # from rest_framework.response import Response
@@ -276,3 +280,13 @@ class SociedadAnonimaCorreccionAreaLegales(View):
         repository.update_sociedad(sociedad_anonima, request.POST, file = file)
         self.__complete_task_bonita(id_caso) 
         return redirect('/')
+
+def render_pdf(request, id_sociedad):
+    try:
+        sociedad = repository.sociedad_anonima(id_sociedad)
+        pdf = sociedad.estatuto
+    except:
+        pdf = ""
+    filepath = os.path.join('media', pdf.name)
+    return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+  

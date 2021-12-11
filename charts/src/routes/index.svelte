@@ -1,33 +1,30 @@
 <script>
+    import { isLoggedUser } from '$store/store.js'
+
+
     import ChartCasesByTask from '$component/ChartCasesByTask.svelte'
     import ChartsetCasesByDate from '$component/ChartsetCasesByDate.svelte'
-    let selectedOption = 0; // Representa el tipo de grafico seleccionado
+    import Dashboard from '$component/Dashboard.svelte'
 </script>
 
-
+{#if $isLoggedUser == 1}
 <div class="container">
-    <div class="nav-metrics nav-metrics-border">
-        <div class="metric-width" on:click={() => selectedOption = 0}>
-            <span> Casos por tarea </span>
-        </div>
-        <div class="metric-width" on:click={() => selectedOption = 1}>
-            <span> Solicitudes de altas por dia </span>
-        </div>
-        <div class="metric-width" on:click={() => selectedOption = 2}>
-            <span> Grafico3 </span>
-        </div>
-    </div>
-    <div style="margin-top: 30px">
-        Grafico
-        {#if selectedOption == 0}
+    <div style="margin-top: 30px; display: flex; flex-direction: row">
+        <div style="margin-right: 100px; width: 300px; text-align: center">
+            <label> Casos por tarea </label>
             <ChartCasesByTask />
-        {:else if selectedOption == 1}
+        </div>
+        <div style="margin-right: 100px; width: 300px; text-align: center">
+            <label> Solicitudes de altas por dia </label>
             <ChartsetCasesByDate />
-        {:else}
-            Chart 3
-        {/if}
+        </div>
+        <div style="margin-right: 100px; width: 300px; text-align: center">
+            <label> Altas aprobadas por dia </label>
+            <Dashboard />
+        </div>
     </div>
 </div>
+{/if}
 
 <style scoped>
     .container {

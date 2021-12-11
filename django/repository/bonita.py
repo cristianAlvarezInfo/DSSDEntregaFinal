@@ -177,3 +177,12 @@ class Bonita(object):
         body = '{"assigned_id": "' + str(user_id) + '"}'
         response = requests.request('PUT', URL, headers = headers, data = body)
         return response
+
+    def get_archived_cases(self, cookies, token):
+        URL = f'{self._URL}/bonita/API/bpm/archivedCase?f=name=Pool'
+        headers = {'Cookie': cookies, 'X-Bonita-API-Token': token}
+        response = requests.request('GET', URL, headers = headers)
+        print(response.status_code)
+        print(response.json())
+        return response
+        

@@ -269,15 +269,23 @@ def get_count_active_task_by_name(request):
 def get_count_active_task_by_date(request):
     response = JsonResponse({})
     cases_by_date_dict = {}
-    #tasks = ['Validacion de formulario'] # lista de tareas [<nombre>]
-    #[cookies, token, process_id, response] = bonita.login_user('walter.bates','bpm')
-    #for task in sociedades:
-    #active_tasks_dict[task] = len(active_cases)
     for res_date_count in repository.altas_by_date():
         print(res_date_count['fecha_creacion'].strftime("%d-%m-%Y"))
         cases_by_date_dict[res_date_count['fecha_creacion'].strftime("%d-%m-%Y")]=res_date_count['dcount']
-    #print(repository.altas_by_date())
     response = JsonResponse({'state': response.status_code, 'ok': response.status_code == 200, 'tasks': json.loads(json.dumps(cases_by_date_dict))})
+    response["Access-Control-Allow-Origin"] = "*"
+    return response
+  
+@method_decorator(csrf_exempt)
+def get_archived_cases(request):
+    response = JsonResponse({})
+    [cookies, token, process_id, response] = bonita.login_user('walter.bates','bpm')
+    response = bonita.get_archived_cases(cookies, token)    
+    response = JsonResponse({
+        'state': response.status_code, 
+        'ok': response.status_code == 200, 
+        'tasks': json.loads(json.dumps(response.json()))
+    })
     response["Access-Control-Allow-Origin"] = "*"
     return response
 

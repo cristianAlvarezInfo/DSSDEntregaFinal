@@ -89,7 +89,7 @@
     <p> Email Apoderado: {sociedad.emailApoderado} </p>
     <p> Nombre: {sociedad.nombre} </p>
     <p> Nombre: {sociedad.nombre} </p>
-    <p> Estatuto: <a href="https://docs.google.com/document/d/"></a> </p>
+    <p> <a href={`http://localhost:8000/pdf_viewer/${sociedad.id}/`}>Ver Estatuto</a> </p>
    <div>
       {#if sociedad.paisesExporta &&  sociedad.paisesExporta.length}
       Paises a los que exporta
