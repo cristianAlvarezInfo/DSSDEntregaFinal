@@ -5,7 +5,7 @@ from models.models import *
 
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-
+from django.db.models import Count
 
 
 class Repository(object):
@@ -84,6 +84,12 @@ class Repository(object):
 
     def sociedades_anonimas(self):
         return SociedadAnonima.objects.all()
+
+    def altas_by_date(self):
+        return(SociedadAnonima.objects
+            .values('fecha_creacion')
+            .annotate(dcount=Count('fecha_creacion'))
+            .order_by())
 
     def sociedad_anonima(self, id_sociedad):
         return SociedadAnonima.objects.get(id=id_sociedad)

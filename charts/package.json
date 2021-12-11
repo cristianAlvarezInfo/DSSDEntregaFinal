@@ -1,0 +1,21 @@
+{
+  "name": "charts",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "svelte-kit dev --port 3200",
+    "build": "svelte-kit build",
+    "package": "svelte-kit package",
+    "preview": "svelte-kit preview"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/kit": "next",
+    "svelte": "^3.44.2"
+  },
+  "type": "module",
+  "dependencies": {
+    "handlebars": "^4.7.7",
+    "html-pdf": "^3.0.1",
+    "svelte-frappe-charts": "^1.9.1"
+  }
+}
