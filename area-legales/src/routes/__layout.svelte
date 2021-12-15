@@ -9,3 +9,11 @@
 <Header />
 
 <slot />
+
+
+<style>
+    :global(body) {
+      margin: 0 !important;
+      background-color: #F3F2ED;
+    }
+  </style>

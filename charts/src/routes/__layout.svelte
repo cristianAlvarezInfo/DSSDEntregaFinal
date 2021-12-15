@@ -1,5 +1,6 @@
 <script>
     import { cookies, token, userID, idProcess, isLoggedUser } from '$store/store.js'
+    import Header from '$component/Header.svelte'
 
     const logout = () => {
         cookies.set('')
@@ -16,7 +17,9 @@
     <title> Gererencia </title>
 </svelte:head>
 
+<Header/>
 
+<!--
 <header class="header">
     
     <div style="width: 50%">
@@ -34,6 +37,7 @@
         </div>
     </div>
 </header>
+-->
 
 <slot />
 
@@ -41,19 +45,7 @@
 <style>
     :global(body) {
         margin: 0 !important;
+        background-color: #F3F2ED;
     }
-    .header {
-        width: 100%;
-        height: 50px;
-        background-color: #34D392;
-        display: flex;
-        flex-direction: row;
-    }
-
-    .title {
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: 500;
-        font-size: 20px;
-    }
-
+    
 </style>

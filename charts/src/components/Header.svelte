@@ -12,14 +12,7 @@
 
 </script>
 <nav class="navbar navbar-bg__color">
-    <div style="width: 20%; padding-top: 20px; padding-left: 5px;"><span class="title text-color">Mesa de entrada</span></div>
-    <div class="navbar-opts" style="padding-top: 25px;">
-        {#if $isLoggedUser == 1 }
-          <a class="text-color" href="/bandejaGeneral"> Bandeja de entrada </a>
-          <a class="text-color" href="/bandejaInterna"> Bandeja de entrada persona </a>
-          <a class="text-color" href="/ListadoCarpetaFisica"> Bandeja carpetas </a>
-        {/if}
-    </div>
+    <div style="width: 20%; padding-top: 20px; padding-left: 5px;"><span class="title text-color">Dashboards</span></div>
     <div class="navbar-opts-end" style="padding-top: 20px; padding-right: 25px">
         {#if $isLoggedUser == 1}
           <a class="text-color" style="font-size: 21px" href="/" on:click={logout}> Logout </a>
@@ -36,7 +29,7 @@
       text-decoration: none;
     }
     .text-color{
-      color: white;
+      color: black;
     }
     .title {
       font-size: 25px;
@@ -46,6 +39,7 @@
       flex-direction: row;
       width: 100%;
       height: 80px;
+      justify-content: space-between;
     }
     .navbar-opts {
       width: 70%; 
@@ -61,6 +55,6 @@
       padding-top: 5px;   
     }
     .navbar-bg__color {
-        background-color: #151B25;
+        background-color: #34D392;
     }
 </style>

@@ -256,7 +256,7 @@ def export_to_pdf(request):
 def get_count_active_task_by_name(request):
     response = JsonResponse({})
     active_tasks_dict = {}
-    tasks = ['Validacion de formulario'] # lista de tareas [<nombre>]
+    tasks = ['Validacion de formulario','Corrección de formulario','Evaluacion de tramite','Generación carpeta fisica','corregir estatuto'] # lista de tareas [<nombre>]
     [cookies, token, process_id, response] = bonita.login_user('walter.bates','bpm')
     for task in tasks:
         [active_cases, response] = bonita.get_active_tasks_by_name(cookies, token, task)

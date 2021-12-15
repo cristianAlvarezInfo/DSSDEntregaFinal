@@ -165,7 +165,7 @@
     font-size: 22px;
     width: 85%;
     height: 50px;
-    background-color: #18A8E8;
+    background-color: #151B25;
     border-color: #18A8E8;
   }
 </style>

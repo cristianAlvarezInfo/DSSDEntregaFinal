@@ -62,6 +62,48 @@
 </script>
 
 
+
+
+
+<div>
+  <div style="display: flex; justify-content: center; margin-top: 10%">
+    <div class="container-div">
+        {#if !isValidInfo}
+        <div class="error-msg error-container" style="margin-top: 20px">
+            <span class="text-style" style="font-weight: 700; color: #151B25"> Los datos ingresados son invalidos </span>
+        </div>
+        {/if}
+        <div class="container-form" style="padding-left: 10%; padding-top: 15%;">
+          <form style="display: flex; flex-direction: column;">
+            <div>
+              <span class="text-style" style="color: #18A8E8">Iniciar Sesion</span>
+            </div>  
+            <div style="margin-top: 5%">
+              <input
+                bind:value={userInfo.username}
+                type="text"
+                class="input-text"
+                placeholder="Ingrese su nombre de usuario"
+              />
+            </div>
+            <div style="margin-top: 7%">
+              <input
+                bind:value={userInfo.password}
+                type="password"
+                class="input-text"
+                placeholder="Ingrese su password"
+              />
+            </div>
+            <div style="width: 100%; margin-top: 7%">
+              <button class="submit-btn input-text" on:click={login}>Enviar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!--
 <div>
     {JSON.stringify(userInfo)}
     <div style="display: flex; justify-content: center">
@@ -96,3 +138,44 @@
       </div>
     </div>
 </div>
+-->
+
+
+
+<style>
+  .container-div {
+    border-radius: 20px;
+    height: 400px;
+    width: 30%;
+    background-color: white;
+  }
+  .container-form {
+    display: flex; 
+    justify-content: center;
+    flex-direction: column;
+  }
+  .error-container {
+    text-align: center; 
+    height: 40px; 
+    padding-top: 10px
+  }
+  .error-msg {
+    background-color: #FB6666;
+  }
+  .text-style {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .input-text {
+    width: 80%;
+    height: 10px;
+    padding: 10px;
+  }
+  .submit-btn {
+    color: white;
+    font-size: 22px;
+    width: 85%;
+    height: 50px;
+    background-color: #18A8E8;
+    border-color: #18A8E8;
+  }
+</style>
