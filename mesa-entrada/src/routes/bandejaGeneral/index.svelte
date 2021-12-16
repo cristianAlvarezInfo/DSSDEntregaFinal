@@ -1,4 +1,6 @@
 <script>
+    import  Modal  from '$component/ModalV1.svelte';
+    import  DetailModal  from '$component/DetailModal.svelte';
     import { cookies, token, userID } from '$store/store';
     $: segments = [];
 
@@ -42,8 +44,11 @@
         response = await response.json();
       }
 
+      function closeModal(){ 
+        selectedModal = -1;
+      }
 
-
+      let selectedModal = -1;
 </script>
 
 <div>
@@ -51,16 +56,6 @@
         Trayendo sociedad anonimas. Espere :)
     {:then}
         {#if segments && segments.length}
-        <!--
-        <ul style="display: flex; flex-direction: column;  list-style:none;">
-        {#each segments as sociedad}
-                <br>
-                <li> { sociedad.data.nombre } </li>
-                <li style="margin-left: 10px"> { sociedad.data.emailApoderado } </li>
-                <li style="margin-left: 10px"><button on:click={ apropiarse(sociedad.task_id) }>Apropiarse</button></li>
-        {/each}
-        </ul>
-        -->
         <div class="container-table">
           <table>
             <thead>
@@ -73,19 +68,21 @@
               <td>Opciones</td>
             </thead>
             <tbody>
-              {#each segments as sociedad}
-               
+              {#each segments as sociedad, i}
                 <tr>
                   <td>{ sociedad.data.nombre }</td>
                   <td>{ sociedad.data.emailApoderado }</td>
-                  <td>{ sociedad.data.nombre }</td>
                   <td>{ sociedad.data.fechaCreacion }</td>
+                  <td>{ sociedad.data.domicilioLegal }</td>
                   <td>{ sociedad.data.domicilioReal }</td>
-                  <td><a href={`http://localhost:8000/pdf_viewer/${sociedad.data.id}/`}>Ver Estatuto</a></td>
+                  <td><a href={`http://localhost:8000/pdf_viewer/${sociedad.data.id}/`} target="_blank">Ver Estatuto</a></td>
                   <td>
                     <div class="inline-container">
                       <div class="option-btn btn-apropiarse" style="margin-right: 10px" on:click={ apropiarse(sociedad.task_id) }> Apropiarse </div>
-                      <div class="option-btn btn-detalle"> Detalle </div>
+                      <div class="option-btn btn-detalle" on:click={() => selectedModal = i}> Detalle </div>
+                      {#if selectedModal == i}
+                        <DetailModal {sociedad} bind:selectedModal={selectedModal} />
+                      {/if}
                     </div>
                   </td>
                 </tr>
@@ -108,6 +105,10 @@
     display: flex;
     flex-direction: row;
   }
+  .column-container {
+    display: flex;
+    flex-direction: column;
+  }
   .container-table{
     display: flex;
     justify-content: center;
@@ -120,6 +121,17 @@
   }
   tr{
     height: 70px;
+  }
+  .inline-end {
+    display: flex;
+    justify-content: end;
+  }
+  .modal-title {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .modal-text{
+    font-size: 13;
   }
   .option-btn {
     width: 100px;
