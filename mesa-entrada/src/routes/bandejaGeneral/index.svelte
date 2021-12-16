@@ -1,5 +1,4 @@
 <script>
-    import  Modal  from '$component/ModalV1.svelte';
     import  DetailModal  from '$component/DetailModal.svelte';
     import { cookies, token, userID } from '$store/store';
     $: segments = [];
